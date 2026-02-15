@@ -1,6 +1,11 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
+export const metadata = {
+  title: "Contact",
+  description: "Get in touch with eazyfilms for collaborations, prints, and inquiries.",
+};
+
 export default function Contact() {
   return (
     <main className="min-h-screen">

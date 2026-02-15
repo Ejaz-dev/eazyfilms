@@ -1,6 +1,11 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
+export const metadata = {
+  title: "Film",
+  description: "Selected video work and short films by eazyfilms.",
+};
+
 export default function Film() {
   return (
     <main className="min-h-screen">

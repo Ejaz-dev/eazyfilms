@@ -1,6 +1,11 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
+export const metadata = {
+  title: "About",
+  description: "Learn more about eazyfilms — a visual project focused on street photography and human connection.",
+};
+
 export default function About() {
   return (
     <main className="min-h-screen">
