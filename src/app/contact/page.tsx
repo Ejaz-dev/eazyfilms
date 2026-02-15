@@ -8,7 +8,7 @@ export const metadata = {
 
 export default function Contact() {
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen flex flex-col">
       <Navbar />
 
       <section className="pt-28 md:pt-36 pb-20 px-4 md:px-6">
