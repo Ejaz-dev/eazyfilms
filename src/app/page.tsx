@@ -1,4 +1,5 @@
 import Navbar from "@/components/Navbar";
+import Gallery from "@/components/Gallery";
 
 const images = [
   { id: 1, src: "/images/1.jpg" },
@@ -40,19 +41,7 @@ export default function Home() {
       {/* Gallery */}
       <section className="px-4 md:px-6 pb-20">
         <div className="max-w-[1800px] mx-auto">
-          <div className="masonry">
-            {images.map((img) => (
-              <div key={img.id} className="masonry-item">
-                <div className="rounded overflow-hidden cursor-pointer group">
-                  <img
-                    src={img.src}
-                    alt=""
-                    className="w-full transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
+          <Gallery images={images} />
         </div>
       </section>
     </main>
