@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Gallery from "@/components/Gallery";
+import Footer from "@/components/Footer";
 
 const images = [
   { id: 1, src: "/images/1.jpg" },
@@ -44,6 +45,8 @@ export default function Home() {
           <Gallery images={images} />
         </div>
       </section>
+
+      <Footer />
     </main>
   );
 }
