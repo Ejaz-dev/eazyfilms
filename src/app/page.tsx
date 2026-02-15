@@ -1,5 +1,21 @@
 import Navbar from "@/components/Navbar";
 
+const images = [
+  { id: 1, src: "/images/1.jpg" },
+  { id: 2, src: "/images/2.jpg" },
+  { id: 3, src: "/images/3.jpg" },
+  { id: 4, src: "/images/4.jpg" },
+  { id: 5, src: "/images/5.jpg" },
+  { id: 6, src: "/images/6.jpg" },
+  { id: 7, src: "/images/7.jpg" },
+  { id: 8, src: "/images/8.jpg" },
+  { id: 9, src: "/images/9.jpg" },
+  { id: 10, src: "/images/10.jpg" },
+  { id: 11, src: "/images/11.jpg" },
+  { id: 12, src: "/images/12.jpg" },
+  { id: 13, src: "/images/13.jpg" },
+];
+
 export default function Home() {
   return (
     <main className="min-h-screen">
@@ -21,18 +37,19 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Gallery placeholder */}
+      {/* Gallery */}
       <section className="px-4 md:px-6 pb-20">
         <div className="max-w-[1800px] mx-auto">
           <div className="masonry">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-              <div key={i} className="masonry-item">
-                <div
-                  className="bg-[#161616] rounded overflow-hidden"
-                  style={{
-                    height: `${150 + (i % 3) * 100}px`,
-                  }}
-                />
+            {images.map((img) => (
+              <div key={img.id} className="masonry-item">
+                <div className="rounded overflow-hidden cursor-pointer group">
+                  <img
+                    src={img.src}
+                    alt=""
+                    className="w-full transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                  />
+                </div>
               </div>
             ))}
           </div>
