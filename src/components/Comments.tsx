@@ -2,12 +2,14 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { supabase } from "@/lib/supabase";
 
 interface Comment {
   id: string;
-  text: string;
+  image_id: number;
   author: string;
-  timestamp: number;
+  text: string;
+  created_at: string;
 }
 
 interface CommentsProps {
@@ -19,19 +21,61 @@ export default function Comments({ imageId }: CommentsProps) {
   const [newComment, setNewComment] = useState("");
   const [author, setAuthor] = useState("");
   const [hasSetName, setHasSetName] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const commentsEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(function() {
-    const stored = localStorage.getItem("eazyfilms-comments-" + imageId);
-    if (stored) {
-      setComments(JSON.parse(stored));
-    }
     const savedName = localStorage.getItem("eazyfilms-username");
     if (savedName) {
       setAuthor(savedName);
       setHasSetName(true);
     }
+  }, []);
+
+  useEffect(function() {
+    setIsLoading(true);
+    
+    async function fetchComments() {
+      const { data, error } = await supabase
+        .from("comments")
+        .select("*")
+        .eq("image_id", imageId)
+        .order("created_at", { ascending: true });
+
+      if (error) {
+        console.error("Error fetching comments:", error);
+      } else {
+        setComments(data || []);
+      }
+      setIsLoading(false);
+    }
+
+    fetchComments();
+
+    const channel = supabase
+      .channel("comments-channel-" + imageId)
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "comments",
+          filter: "image_id=eq." + imageId,
+        },
+        function(payload) {
+          setComments(function(current) {
+            const exists = current.some(function(c) { return c.id === payload.new.id; });
+            if (exists) return current;
+            return [...current, payload.new as Comment];
+          });
+        }
+      )
+      .subscribe();
+
+    return function() {
+      supabase.removeChannel(channel);
+    };
   }, [imageId]);
 
   useEffect(function() {
@@ -40,7 +84,7 @@ export default function Comments({ imageId }: CommentsProps) {
     }
   }, [comments]);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!newComment.trim() || !author.trim()) return;
 
@@ -49,24 +93,25 @@ export default function Comments({ imageId }: CommentsProps) {
       setHasSetName(true);
     }
 
-    const comment: Comment = {
-      id: Date.now().toString(),
-      text: newComment.trim(),
+    const { error } = await supabase.from("comments").insert({
+      image_id: imageId,
       author: author.trim(),
-      timestamp: Date.now(),
-    };
+      text: newComment.trim(),
+    });
 
-    const updatedComments = [...comments, comment];
-    setComments(updatedComments);
-    localStorage.setItem("eazyfilms-comments-" + imageId, JSON.stringify(updatedComments));
+    if (error) {
+      console.error("Error posting comment:", error);
+      return;
+    }
+
     setNewComment("");
-    
+
     if (inputRef.current) {
       inputRef.current.focus();
     }
   }
 
-  function formatTime(timestamp: number) {
+  function formatTime(timestamp: string) {
     const date = new Date(timestamp);
     const now = new Date();
     const diff = now.getTime() - date.getTime();
@@ -115,7 +160,13 @@ export default function Comments({ imageId }: CommentsProps) {
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-1 scrollbar-thin">
-        {comments.length === 0 && (
+        {isLoading && (
+          <div className="flex items-center justify-center h-full">
+            <div className="w-6 h-6 border-2 border-white/20 border-t-white/60 rounded-full animate-spin"></div>
+          </div>
+        )}
+
+        {!isLoading && comments.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center py-12">
             <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="text-[#444]">
@@ -126,33 +177,35 @@ export default function Comments({ imageId }: CommentsProps) {
             <p className="text-[#444] text-xs">Be the first to share your thoughts</p>
           </div>
         )}
-        
-        <AnimatePresence>
-          {comments.map(function(comment, index) {
-            return (
-              <motion.div
-                key={comment.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.2 }}
-                className="group py-3 px-3 rounded-xl hover:bg-white/[0.02] transition-colors"
-              >
-                <div className="flex gap-3">
-                  <div className={"w-8 h-8 rounded-full bg-gradient-to-br flex items-center justify-center flex-shrink-0 " + getAvatarColor(comment.author)}>
-                    <span className="text-white text-xs font-semibold">{getInitials(comment.author)}</span>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="text-white font-medium text-sm">{comment.author}</span>
-                      <span className="text-[#555] text-xs">{formatTime(comment.timestamp)}</span>
+
+        {!isLoading && (
+          <AnimatePresence>
+            {comments.map(function(comment) {
+              return (
+                <motion.div
+                  key={comment.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="group py-3 px-3 rounded-xl hover:bg-white/[0.02] transition-colors"
+                >
+                  <div className="flex gap-3">
+                    <div className={"w-8 h-8 rounded-full bg-gradient-to-br flex items-center justify-center flex-shrink-0 " + getAvatarColor(comment.author)}>
+                      <span className="text-white text-xs font-semibold">{getInitials(comment.author)}</span>
                     </div>
-                    <p className="text-[#aaa] text-sm mt-1 leading-relaxed break-words">{comment.text}</p>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-white font-medium text-sm">{comment.author}</span>
+                        <span className="text-[#555] text-xs">{formatTime(comment.created_at)}</span>
+                      </div>
+                      <p className="text-[#aaa] text-sm mt-1 leading-relaxed break-words">{comment.text}</p>
+                    </div>
                   </div>
-                </div>
-              </motion.div>
-            );
-          })}
-        </AnimatePresence>
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        )}
         <div ref={commentsEndRef}></div>
       </div>
 
@@ -173,7 +226,7 @@ export default function Comments({ imageId }: CommentsProps) {
               />
             </motion.div>
           )}
-          
+
           <div className="flex gap-2 items-end">
             {(hasSetName || author.trim()) && (
               <div className={"w-9 h-9 rounded-full bg-gradient-to-br flex items-center justify-center flex-shrink-0 " + getAvatarColor(author || "A")}>
@@ -201,7 +254,7 @@ export default function Comments({ imageId }: CommentsProps) {
               </button>
             </div>
           </div>
-          
+
           {hasSetName && (
             <button
               type="button"
