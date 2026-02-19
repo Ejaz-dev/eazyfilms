@@ -35,7 +35,7 @@ export default function Comments({ imageId }: CommentsProps) {
 
   useEffect(function() {
     setIsLoading(true);
-    
+
     async function fetchComments() {
       const { data, error } = await supabase
         .from("comments")

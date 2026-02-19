@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import LoadingScreen from "@/components/LoadingScreen";
+import CustomCursor from "@/components/CustomCursor";
 
 export const metadata: Metadata = {
   title: {
@@ -53,6 +55,8 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" />
       </head>
       <body className="antialiased">
+        <CustomCursor />
+        <LoadingScreen />
         {children}
       </body>
     </html>

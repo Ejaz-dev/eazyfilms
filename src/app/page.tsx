@@ -3,19 +3,19 @@ import Gallery from "@/components/Gallery";
 import Footer from "@/components/Footer";
 
 const images = [
-  { id: 1, src: "/images/1.jpg" },
-  { id: 2, src: "/images/2.jpg" },
-  { id: 3, src: "/images/3.jpg" },
-  { id: 4, src: "/images/4.jpg" },
-  { id: 5, src: "/images/5.jpg" },
-  { id: 6, src: "/images/6.jpg" },
-  { id: 7, src: "/images/7.jpg" },
-  { id: 8, src: "/images/8.jpg" },
-  { id: 9, src: "/images/9.jpg" },
-  { id: 10, src: "/images/10.jpg" },
-  { id: 11, src: "/images/11.jpg" },
-  { id: 12, src: "/images/12.jpg" },
-  { id: 13, src: "/images/13.jpg" },
+  { id: 1, src: "/images/1.jpg", title: "Urban Steps", category: "Architecture" },
+  { id: 2, src: "/images/2.jpg", title: "Kids at Play", category: "People" },
+  { id: 3, src: "/images/3.jpg", title: "Wall Mural", category: "Architecture" },
+  { id: 4, src: "/images/4.jpg", title: "City Cyclist", category: "Street" },
+  { id: 5, src: "/images/5.jpg", title: "Man's Best Friend", category: "People" },
+  { id: 6, src: "/images/6.jpg", title: "On Patrol", category: "Street" },
+  { id: 7, src: "/images/7.jpg", title: "Rickshaw Guy", category: "Street" },
+  { id: 8, src: "/images/8.jpg", title: "Clocktower Sunset", category: "Architecture" },
+  { id: 9, src: "/images/9.jpg", title: "Vintage", category: "Street" },
+  { id: 10, src: "/images/10.jpg", title: "Love by the Harbourside", category: "People" },
+  { id: 11, src: "/images/11.jpg", title: "Street Performer", category: "People" },
+  { id: 12, src: "/images/12.jpg", title: "Bench Stories", category: "People" },
+  { id: 13, src: "/images/13.jpg", title: "Night Porch", category: "Street" },
 ];
 
 export default function Home() {
@@ -23,7 +23,6 @@ export default function Home() {
     <main className="min-h-screen flex flex-col">
       <Navbar />
 
-      {/* Hero */}
       <header className="pt-28 md:pt-36 pb-10 md:pb-16 px-4 md:px-6">
         <div className="max-w-[1800px] mx-auto">
           <h1
@@ -39,8 +38,7 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Gallery */}
-      <section className="px-4 md:px-6 pb-20">
+      <section className="px-4 md:px-6 pb-20 flex-1">
         <div className="max-w-[1800px] mx-auto">
           <Gallery images={images} />
         </div>
