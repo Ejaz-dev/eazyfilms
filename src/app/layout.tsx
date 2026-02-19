@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import LoadingScreen from "@/components/LoadingScreen";
 import CustomCursor from "@/components/CustomCursor";
+import ScrollProgress from "@/components/ScrollProgress";
 
 export const metadata: Metadata = {
   title: {
@@ -56,6 +57,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         <CustomCursor />
+        <ScrollProgress />
         <LoadingScreen />
         {children}
       </body>

@@ -4,20 +4,23 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 
-const navItems = ["Film", "About", "Contact"];
+const navItems = ["Film", "Pricing", "About", "Contact"];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
+  useEffect(function() {
+    function onScroll() {
+      setScrolled(window.scrollY > 40);
+    }
     window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
+    return function() {
+      window.removeEventListener("scroll", onScroll);
+    };
   }, []);
 
-  // Prevent body scroll when menu is open
-  useEffect(() => {
+  useEffect(function() {
     if (menuOpen) {
       document.body.style.overflow = "hidden";
     } else {
@@ -28,37 +31,35 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          scrolled ? "bg-[#0a0a0a]/90 backdrop-blur-xl py-3" : "bg-transparent py-5"
-        }`}
+        className={"fixed top-0 left-0 right-0 z-50 transition-all duration-500 " + (scrolled ? "bg-[#0a0a0a]/90 backdrop-blur-xl py-3" : "bg-transparent py-5")}
       >
         <div className="max-w-[1800px] mx-auto px-4 md:px-6 flex items-center justify-between">
           <Link
             href="/"
             className="text-xl font-semibold tracking-tight z-50"
             style={{ fontFamily: "'Clash Display', sans-serif" }}
-            onClick={() => setMenuOpen(false)}
+            onClick={function() { setMenuOpen(false); }}
           >
             eazy<span className="text-[#555]">films</span>
           </Link>
 
-          {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-6 md:gap-8">
-            {navItems.map((item) => (
-              <Link
-                key={item}
-                href={`/${item.toLowerCase()}`}
-                className="text-xs md:text-sm text-[#888] hover:text-white transition-colors"
-              >
-                {item}
-              </Link>
-            ))}
+            {navItems.map(function(item) {
+              return (
+                <Link
+                  key={item}
+                  href={"/" + item.toLowerCase()}
+                  className="text-xs md:text-sm text-[#888] hover:text-white transition-colors"
+                >
+                  {item}
+                </Link>
+              );
+            })}
           </div>
 
-          {/* Mobile Hamburger Button */}
           <button
             className="md:hidden z-50 w-10 h-10 flex flex-col items-center justify-center gap-1.5"
-            onClick={() => setMenuOpen(!menuOpen)}
+            onClick={function() { setMenuOpen(!menuOpen); }}
             aria-label="Toggle menu"
           >
             <motion.span
@@ -88,7 +89,6 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
@@ -99,24 +99,26 @@ export default function Navbar() {
             transition={{ duration: 0.3 }}
           >
             <nav className="flex flex-col items-center gap-8">
-              {navItems.map((item, index) => (
-                <motion.div
-                  key={item}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 20 }}
-                  transition={{ duration: 0.3, delay: index * 0.1 }}
-                >
-                  <Link
-                    href={`/${item.toLowerCase()}`}
-                    className="text-3xl font-medium text-white hover:text-[#888] transition-colors"
-                    style={{ fontFamily: "'Clash Display', sans-serif" }}
-                    onClick={() => setMenuOpen(false)}
+              {navItems.map(function(item, index) {
+                return (
+                  <motion.div
+                    key={item}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    transition={{ duration: 0.3, delay: index * 0.1 }}
                   >
-                    {item}
-                  </Link>
-                </motion.div>
-              ))}
+                    <Link
+                      href={"/" + item.toLowerCase()}
+                      className="text-3xl font-medium text-white hover:text-[#888] transition-colors"
+                      style={{ fontFamily: "'Clash Display', sans-serif" }}
+                      onClick={function() { setMenuOpen(false); }}
+                    >
+                      {item}
+                    </Link>
+                  </motion.div>
+                );
+              })}
             </nav>
           </motion.div>
         )}
