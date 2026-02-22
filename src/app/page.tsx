@@ -16,6 +16,8 @@ const images = [
   { id: 11, src: "/images/11.jpg", title: "Street Performer", category: "People" },
   { id: 12, src: "/images/12.jpg", title: "Bench Stories", category: "People" },
   { id: 13, src: "/images/13.jpg", title: "Night Porch", category: "Street" },
+  { id: 14, src: "/images/14.jpg", title: "Team", category: "People" },
+  { id: 15, src: "/images/15.jpg", title: "Enemy territory", category: "People" },
 ];
 
 export default function Home() {
